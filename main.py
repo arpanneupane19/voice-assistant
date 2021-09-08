@@ -39,6 +39,10 @@ class Assistant:
             return command
 
 
+    def cant_do(self):
+        self.speak("Sorry, I do not have that ability yet. Please try again later.")
+
+
     # Respond to the command given by the user
     def respond(self, command):
         # if the name of the instance is in the command
@@ -87,6 +91,13 @@ class Assistant:
         if "show me my to-do list" in command:
             self.speak("Here are your to-dos.")
             print("Your to-dos ->", self.todos)
+
+        if "what day is it" in command:
+            self.speak(f'Today is {datetime.datetime.today().strftime("%A")}, {datetime.date.today().strftime("%B %d, %Y")}')
+
+        else:
+            self.cant_do()
+
 
 # Create assistant
 assistant = Assistant("Computer", [])
