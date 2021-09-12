@@ -3,6 +3,7 @@ import pyttsx3
 import datetime
 import sys
 import webbrowser
+import time
 
 
 r = sr.Recognizer()
@@ -36,11 +37,12 @@ class Assistant:
                 self.speak(
                     "My apologies, my speech service is down. Please try again later.")
                 sys.exit()
+            print(command)
             return command
 
 
     def cant_do(self):
-        self.speak("Sorry, I do not have that ability yet. Please try again later.")
+        self.speak("Sorry, I do not have that ability yet.")
 
 
     # Respond to the command given by the user
@@ -65,12 +67,14 @@ class Assistant:
         if "search" in command:
             self.speak('What would you like to search for?')
             print("ask for something to search for...")
+            print("Listening...")
             query = self.listen()
             webbrowser.open("https://google.com/search?query="+query)
 
         if "add a to-do" in command:
             self.speak("What to-do would you like to add?")
             print("Say a to-do that you would like to add...")
+            print("Listening...")
             todo = self.listen()
             self.todos.append(todo)
             self.speak("Your to-do has successfully been added.")
@@ -79,9 +83,11 @@ class Assistant:
         if "remove a to-do" in command:
             self.speak("What to-do would you like to remove?")
             print("Say a to-do that you would like to remove", self.todos)
+            print("Listening...")
             todo = self.listen()
             if todo not in self.todos:
                 self.speak("That to-do does not exist. If you meant to say a different to-do, please ask to remove a to-do again.")
+                print("Listening...")
                 todo = self.listen()
             if todo in self.todos:
                 self.todos.remove(todo)
@@ -94,6 +100,29 @@ class Assistant:
 
         if "what day is it" in command:
             self.speak(f'Today is {datetime.datetime.today().strftime("%A")}, {datetime.date.today().strftime("%B %d, %Y")}')
+
+        if "create a file" in command:
+            self.speak("What would you like the filename to be?")
+            print("Say the file name...")
+            filename = self.listen()
+            # Create a file if that file does not exist.
+            new_file = open(f'{filename}.txt', 'x')
+            self.speak("Your file has been successfully created. Would you like to edit this file?")
+            print("Listening...")
+            usr_response = self.listen()
+
+            if 'yes' in usr_response:
+                self.speak("What would you like to write in this file?")
+                file = open(f"{filename}.txt", 'a')
+                print("Start listing the contents of this file...")
+                file_content = self.listen()
+                file.write(file_content)
+                file.close()
+                self.speak("Your content has successfully been added.")
+                print("Saved!")
+                
+            if 'no' in usr_response:
+                self.speak("Okay.")
 
         else:
             self.cant_do()
@@ -108,8 +137,8 @@ greeting = assistant.greet()
 # Use the speak() method and pass in the greeting to greet the user
 assistant.speak(greeting)
 
+print("Listening...")
 while True:
     # This command variable contains what command was said to the assistant and prints it.
     command = assistant.listen()
-    print(command)
     assistant.respond(command)
