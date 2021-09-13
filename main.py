@@ -4,6 +4,7 @@ import datetime
 import sys
 import webbrowser
 import time
+import os
 
 
 r = sr.Recognizer()
@@ -51,7 +52,7 @@ class Assistant:
         if self.name.lower() in command:
             self.speak("Yes")
 
-        if "what is the time" in command:
+        elif "what is the time" in command:
             now = datetime.datetime.now()
             hours = now.strftime("%H")
             if hours > str(12):
@@ -60,18 +61,18 @@ class Assistant:
                 hours = int(hours) + 12
             self.speak(now.strftime(f"{str(hours)}:%M %p"))
 
-        if "goodbye" in command:
+        elif "goodbye" in command:
             self.speak("Goodbye, have a nice day.")
             sys.exit()
 
-        if "search" in command:
+        elif "search" in command:
             self.speak('What would you like to search for?')
             print("ask for something to search for...")
             print("Listening...")
             query = self.listen()
             webbrowser.open("https://google.com/search?query="+query)
 
-        if "add a to-do" in command:
+        elif "add a to-do" in command:
             self.speak("What to-do would you like to add?")
             print("Say a to-do that you would like to add...")
             print("Listening...")
@@ -80,7 +81,7 @@ class Assistant:
             self.speak("Your to-do has successfully been added.")
             print("Your to-dos ->", self.todos)
 
-        if "remove a to-do" in command:
+        elif "remove a to-do" in command:
             self.speak("What to-do would you like to remove?")
             print("Say a to-do that you would like to remove", self.todos)
             print("Listening...")
@@ -94,14 +95,14 @@ class Assistant:
                 self.speak("Your to-do has been successfully removed.")
                 print("Your to-dos ->", self.todos)
 
-        if "show me my to-do list" in command:
+        elif "show me my to-do list" in command:
             self.speak("Here are your to-dos.")
             print("Your to-dos ->", self.todos)
 
-        if "what day is it" in command:
+        elif "what day is it" in command:
             self.speak(f'Today is {datetime.datetime.today().strftime("%A")}, {datetime.date.today().strftime("%B %d, %Y")}')
 
-        if "create a file" in command:
+        elif "create a file" in command:
             self.speak("What would you like the filename to be?")
             print("Say the file name...")
             filename = self.listen()
@@ -123,6 +124,17 @@ class Assistant:
                 
             if 'no' in usr_response:
                 self.speak("Okay.")
+                print("No changes will be added to this file.")
+        
+        elif "delete a file" in command:
+            self.speak("What file would you like to delete?")
+            print("Please say the file that you would like to delete...")
+            filename = self.listen()
+            if os.path.exists(f'{filename}.txt'):
+                os.remove(f'{filename}.txt')
+                self.speak("Your file has been removed.")
+            else:
+                self.speak("Sorry, that file does not exist.")
 
         else:
             self.cant_do()
