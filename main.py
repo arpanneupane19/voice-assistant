@@ -28,16 +28,16 @@ class Assistant:
 
     def listen(self):
         with sr.Microphone() as source:
-            audio = r.listen(source)
+            # audio = r.listen(source)
             command = ''
-            try:
-                command = r.recognize_google(audio)
-            except sr.UnknownValueError:
-                self.speak("Sorry, can you please repeat that?")
-            except sr.RequestError:
-                self.speak(
-                    "My apologies, my speech service is down. Please try again later.")
-                sys.exit()
+            # try:
+            command = input()
+            # except sr.UnknownValueError:
+                # self.speak("Sorry, can you please repeat that?")
+            # except sr.RequestError:
+                # self.speak(
+                    # "My apologies, my speech service is down. Please try again later.")
+                # sys.exit()
             print(command)
             return command
 
@@ -126,6 +126,29 @@ class Assistant:
                 self.speak("Okay.")
                 print("No changes will be added to this file.")
         
+        elif "edit a file" in command:
+            self.speak("What file would you like to edit?")
+            print("Please say the file name that you would like to edit...")
+            filename = self.listen()
+
+            if os.path.exists(f"{filename}.txt"):
+                self.speak("What would you like to add to this file?")
+                print("List what you would like to add to this file.")
+                action = self.listen()
+                if action == 'add':
+                    self.speak("What would you like to add to this file?")
+                    file = open(f"{filename}.txt", 'a')
+                    print("Say something you would like to add to this file.")
+                    add = self.listen()
+                    file.write("\n"+add)
+                    file.close()
+                    self.speak("Your content has been successfully added.")
+                    print("Saved!")
+                else:
+                    self.speak("That action does not exist.")
+            else: 
+                self.speak("That file does not exist.")
+
         elif "delete a file" in command:
             self.speak("What file would you like to delete?")
             print("Please say the file that you would like to delete...")
