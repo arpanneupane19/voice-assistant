@@ -16,35 +16,30 @@ class Assistant:
         self.name = name
         self.todos = todos
 
-
     def greet(self):
         return f'Hello, I am a {self.name}ized voice assistant. How can I assist you today?'
-
 
     def speak(self, speech):
         engine.say(speech)
         engine.runAndWait()
 
-
     def listen(self):
         with sr.Microphone() as source:
-            # audio = r.listen(source)
+            audio = r.listen(source)
             command = ''
-            # try:
-            command = input()
-            # except sr.UnknownValueError:
-                # self.speak("Sorry, can you please repeat that?")
-            # except sr.RequestError:
-                # self.speak(
-                    # "My apologies, my speech service is down. Please try again later.")
-                # sys.exit()
+            try:
+                command = r.recognize_google(audio)
+            except sr.UnknownValueError:
+                self.speak("Sorry, can you please repeat that?")
+            except sr.RequestError:
+                self.speak(
+                    "My apologies, my speech service is down. Please try again later.")
+                sys.exit()
             print(command)
             return command
 
-
     def cant_do(self):
         self.speak("Sorry, I do not have that ability yet.")
-
 
     # Respond to the command given by the user
     def respond(self, command):
@@ -87,7 +82,8 @@ class Assistant:
             print("Listening...")
             todo = self.listen()
             if todo not in self.todos:
-                self.speak("That to-do does not exist. If you meant to say a different to-do, please ask to remove a to-do again.")
+                self.speak(
+                    "That to-do does not exist. If you meant to say a different to-do, please ask to remove a to-do again.")
                 print("Listening...")
                 todo = self.listen()
             if todo in self.todos:
@@ -100,7 +96,8 @@ class Assistant:
             print("Your to-dos ->", self.todos)
 
         elif "what day is it" in command:
-            self.speak(f'Today is {datetime.datetime.today().strftime("%A")}, {datetime.date.today().strftime("%B %d, %Y")}')
+            self.speak(
+                f'Today is {datetime.datetime.today().strftime("%A")}, {datetime.date.today().strftime("%B %d, %Y")}')
 
         elif "create a file" in command:
             self.speak("What would you like the filename to be?")
@@ -108,7 +105,8 @@ class Assistant:
             filename = self.listen()
             # Create a file if that file does not exist.
             new_file = open(f'{filename}.txt', 'x')
-            self.speak("Your file has been successfully created. Would you like to edit this file?")
+            self.speak(
+                "Your file has been successfully created. Would you like to edit this file?")
             print("Listening...")
             usr_response = self.listen()
 
@@ -121,11 +119,11 @@ class Assistant:
                 file.close()
                 self.speak("Your content has successfully been added.")
                 print("Saved!")
-                
+
             if 'no' in usr_response:
                 self.speak("Okay.")
                 print("No changes will be added to this file.")
-        
+
         elif "edit a file" in command:
             self.speak("What file would you like to edit?")
             print("Please say the file name that you would like to edit...")
@@ -146,7 +144,7 @@ class Assistant:
                     print("Saved!")
                 else:
                     self.speak("That action does not exist.")
-            else: 
+            else:
                 self.speak("That file does not exist.")
 
         elif "delete a file" in command:
